@@ -13,7 +13,7 @@ class RootApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Stare",
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
