@@ -1,19 +1,28 @@
-import 'package:app/pages/home.dart';
 import 'package:flutter/material.dart';
+import 'package:stare/pages/profile.dart';
+import 'package:stare/widgets/animated_labels.dart';
+
+import '../data/theme.dart';
 
 void main() {
-  runApp(const RootApp());
+  runApp(RootApp());
 }
 
 class RootApp extends StatelessWidget {
-  const RootApp({Key? key}) : super(key: key);
+  RootApp({Key? key}) : super(key: key);
+
+  final GlobalKey<FadedLabelState> labelKey = GlobalKey<FadedLabelState>();
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Stare",
-      home: const HomePage(),
+      home: SafeArea(
+        child: Scaffold(
+          body: ProfilePage(),
+        ),
+      ),
     );
   }
 }

@@ -7,12 +7,13 @@ const Color darkGrey = Color(0xff545454);
 const Color darkerGrey = Color(0xff1a1a1a);
 
 // * text styles
-const TextStyle headingLarge = TextStyle(
-  fontSize: 64,
+const TextStyle baseTextStyle = TextStyle(
+  height: 1.2,
+  color: darkerGrey,
 );
-const TextStyle headingMedium = TextStyle(
-  fontSize: 56,
-);
-const TextStyle headingSmall = TextStyle(
-  fontSize: 48,
-);
+final TextStyle headlineLarge = baseTextStyle.copyWith(fontSize: 48);
+final TextStyle headlineMedium = baseTextStyle.copyWith(fontSize: 44);
+final TextStyle headlineSmall = baseTextStyle.copyWith(fontSize: 40);
+final TextStyle labelLarge = baseTextStyle.copyWith(fontSize: 32);
+final TextStyle labelMedium = baseTextStyle.copyWith(fontSize: 28);
+final TextStyle labelSmall = baseTextStyle.copyWith(fontSize: 24);

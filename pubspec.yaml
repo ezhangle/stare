@@ -10,6 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  rive: ^0.9.1
+  provider: ^6.0.3
+  flutter_svg: ^1.1.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -18,6 +22,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/rive/
+    - assets/icons/
+    - assets/images/moods/
+    - assets/images/actions/
   
   fonts:
     - family: Poppins
