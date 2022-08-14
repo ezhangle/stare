@@ -41,7 +41,10 @@ class ProfilePage extends StatelessWidget {
         const ColumnGap(),
         Text(
           "Greetings",
-          style: Theme.of(context).textTheme.headlineSmall,
+          style: TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Text(
           "Damien",

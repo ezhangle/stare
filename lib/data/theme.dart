@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'style.dart';
 
 final ThemeData lightTheme = ThemeData(
-  scaffoldBackgroundColor: lightGrey,
+  // colorScheme: const ColorScheme.light(
+  //   primary: darkerGrey,
+  //   secondary: darkGrey,
+  //   background: grey,
+  //   tertiary: lightGrey,
+  // ),
+  scaffoldBackgroundColor: Colors.white,
   fontFamily: "Poppins",
-  textTheme: TextTheme(
-    headlineLarge: headlineLarge,
-    headlineMedium: headlineMedium,
-    headlineSmall: headlineSmall,
-    labelLarge: labelLarge,
-    labelMedium: labelMedium,
-    labelSmall: labelSmall,
-  ),
-  cardTheme: CardTheme(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(32.0),
-    ),
+  textTheme: const TextTheme(
+    displayLarge: display,
+    headlineLarge: headline,
+    titleLarge: title,
+    labelLarge: label,
+    bodyLarge: body,
   ),
 );
