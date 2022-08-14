@@ -7,28 +7,30 @@ const Color darkGrey = Color(0xff545454);
 const Color darkerGrey = Color(0xff1a1a1a);
 
 // * text styles
-const TextStyle display = TextStyle(
-  fontSize: 80,
+const TextStyle baseTextStyle = TextStyle(
   height: 1.25,
-  fontWeight: FontWeight.w800,
+  fontFamily: "Poppins",
+  color: Colors.black,
 );
-const TextStyle headline = TextStyle(
+final TextStyle display = baseTextStyle.copyWith(
   fontSize: 64,
-  height: 1.25,
   fontWeight: FontWeight.w800,
 );
-const TextStyle title = TextStyle(
+final TextStyle headline = baseTextStyle.copyWith(
   fontSize: 48,
-  height: 1.25,
+  fontWeight: FontWeight.w800,
+);
+final TextStyle title = baseTextStyle.copyWith(
+  fontSize: 32,
   fontWeight: FontWeight.w600,
 );
-const TextStyle label = TextStyle(
-  fontSize: 48,
-  height: 1.5,
+final TextStyle label = baseTextStyle.copyWith(
+  fontSize: 32,
   fontWeight: FontWeight.w400,
 );
-const TextStyle body = TextStyle(
-  fontSize: 32,
+final TextStyle body = baseTextStyle.copyWith(
+  fontSize: 24,
   height: 1.5,
+  color: darkGrey,
   fontWeight: FontWeight.w400,
 );

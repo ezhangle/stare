@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stare/pages/profile.dart';
+import 'package:stare/data/theme.dart';
 import 'package:stare/widgets/animated_labels.dart';
 
-import '../data/theme.dart';
 import 'data/style.dart';
 
 void main() {
@@ -18,21 +17,12 @@ class RootApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: const TextTheme(
-          displayLarge: display,
-          headlineLarge: headline,
-          titleLarge: title,
-          labelLarge: label,
-          bodyLarge: body,
-        ),
-      ),
+      theme: lightTheme,
       title: "Stare",
       home: Scaffold(
-        backgroundColor: darkerGrey,
         body: Builder(builder: (context) {
-          print(MediaQuery.of(context).size);
           return SafeArea(
+            minimum: const EdgeInsets.all(32.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
