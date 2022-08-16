@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:stare/data/style.dart';
 
-class FadedLabel extends StatefulWidget {
+class AnimatedLabel extends StatefulWidget {
   final String defaultValue;
   final TextStyle? textStyle;
 
-  const FadedLabel({
+  const AnimatedLabel({
     Key? key,
     this.textStyle,
     required this.defaultValue,
   }) : super(key: key);
 
   @override
-  State<FadedLabel> createState() => FadedLabelState();
+  State<AnimatedLabel> createState() => AnimatedLabelState();
 }
 
-class FadedLabelState extends State<FadedLabel> {
+class AnimatedLabelState extends State<AnimatedLabel> {
   String firstText = "";
   double firstY = -1.25;
   late String secondText;

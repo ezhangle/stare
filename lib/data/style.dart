@@ -34,3 +34,6 @@ final TextStyle body = baseTextStyle.copyWith(
   color: darkGrey,
   fontWeight: FontWeight.w400,
 );
+
+// * size and spacing
+const double defaultPadding = 16.0;

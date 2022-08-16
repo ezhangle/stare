@@ -26,8 +26,7 @@ flutter:
   assets:
     - assets/rive/
     - assets/icons/
-    - assets/images/moods/
-    - assets/images/actions/
+    - assets/images/
   
   fonts:
     - family: Poppins

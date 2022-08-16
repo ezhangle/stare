@@ -1,72 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:stare/widgets/animated_labels.dart';
-import 'package:stare/widgets/flip_list.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../data/style.dart';
+import '../widgets/mood_slider.dart';
 
-const List<String> moods = [
-  "Happy",
-  "Angry",
-  "Sad",
-  "Tired",
-  "Working",
-  "DND",
-];
-
-class MoodSelectorPage extends StatefulWidget {
+class MoodSelectorPage extends StatelessWidget {
   const MoodSelectorPage({Key? key}) : super(key: key);
 
   @override
-  State<MoodSelectorPage> createState() => _MoodSelectorPageState();
-}
-
-class _MoodSelectorPageState extends State<MoodSelectorPage> {
-  final GlobalKey<FadedLabelState> labelKey = GlobalKey<FadedLabelState>();
-  String _mood = moods[0];
-
-  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        children: <Widget>[
-          const Spacer(),
-          Text(
-            "How are you doing damien?", // ?username
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(
+            top: defaultPadding * 2,
+            right: defaultPadding,
+            left: defaultPadding,
+          ),
+          child: Text(
+            "How are you doing damien?",
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const SizedBox(height: 32),
-          FlipListViewBuilder(
-            count: moods.length,
-            builder: ((context, idx) {
-              final String imagePath =
-                  "assets/images/moods/${moods[idx].toLowerCase()}.jpg";
-              return Container(
-                height: 224,
-                width: 224,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage(imagePath),
-                  ),
-                ),
-              );
-            }),
-            onChange: (idx) => setState((() {
-              _mood = moods[idx];
-              labelKey.currentState?.change(_mood);
-            })),
+        ),
+        Column(
+          children: <Widget>[
+            Text(
+              "Happy",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            SvgPicture.asset(
+              "assets/images/illustration.svg",
+              height: 296,
+              fit: BoxFit.contain,
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: defaultPadding * 3),
+          child: MoodSlider(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+            width: MediaQuery.of(context).size.width,
+            height: 64,
           ),
-          const SizedBox(height: 48),
-          FadedLabel(
-            key: labelKey,
-            defaultValue: _mood,
-            textStyle: Theme.of(context).textTheme.labelMedium,
-          ),
-          const SizedBox(height: 64),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
