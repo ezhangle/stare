@@ -26,4 +26,15 @@ final ThemeData lightTheme = ThemeData(
     bodyMedium: body.copyWith(fontSize: 20),
     bodySmall: body.copyWith(fontSize: 16),
   ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(
+        vertical: defaultPadding * 0.75,
+        horizontal: defaultPadding * 2,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(defaultPadding),
+      ),
+    ),
+  ),
 );
