@@ -12,7 +12,7 @@ class ColumnGap extends StatelessWidget {
   const ColumnGap({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => const SizedBox(height: 16.0);
+  Widget build(BuildContext context) => const SizedBox(height: 32.0);
 }
 
 class NavWheel extends StatelessWidget {

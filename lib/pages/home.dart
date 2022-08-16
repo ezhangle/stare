@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stare/data/style.dart';
+import 'package:stare/widgets/utils.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -8,35 +9,73 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(
-            top: 32.0,
-            left: 16.0,
+            top: defaultPadding * 2,
+            left: defaultPadding,
           ),
-          child: SvgPicture.asset(
-            "assets/icons/nav-wheel.svg",
-            width: 40,
+          child: Row(
+            children: const <Widget>[
+              NavWheel(),
+              Spacer(),
+            ],
           ),
         ),
         const Spacer(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
           child: Text(
-            "Mood specific message here.",
-            style: Theme.of(context).textTheme.headlineMedium,
+            "Let's see what can be done!",
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
-        const SizedBox(height: 32.0),
-        Container(
+        const ColumnGap(),
+        SizedBox(
           height: 320,
-          width: double.maxFinite,
-          color: grey,
-          alignment: Alignment.center,
-          child: Text("actions placeholder"),
+          child: Container(
+            width: 246,
+            height: 310,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: BorderRadius.circular(defaultPadding * 2),
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: defaultPadding * 2,
+                  left: defaultPadding * 2,
+                  child: Text(
+                    "Eye",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: SizedBox(
+                    height: 240,
+                    width: 240,
+                    child: SvgPicture.asset(
+                      "assets/images/illustration.svg",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        const SizedBox(height: 64.0),
+        const ColumnGap(),
+        ElevatedButton(
+          onPressed: () {},
+          child: SvgPicture.asset(
+            "assets/icons/arrow-left.svg",
+            color: Colors.white,
+          ),
+        ),
+        const ColumnGap()
       ],
     );
   }
