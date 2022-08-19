@@ -11,3 +11,16 @@ const List<String> performOptions = [
   "Meditation",
   "Sleep",
 ];
+const List<String> months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];

@@ -8,6 +8,8 @@ final ThemeData lightTheme = ThemeData(
     secondary: darkGrey,
     tertiary: grey,
     background: lightGrey,
+    onPrimary: Colors.white,
+    onBackground: Colors.black,
   ),
   scaffoldBackgroundColor: Colors.white,
   fontFamily: "Poppins",
