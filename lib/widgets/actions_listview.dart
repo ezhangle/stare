@@ -117,7 +117,7 @@ class ActionCard extends StatelessWidget {
         ..translate(0.0, index == focusedElement ? 0.0 : 32.0),
       transformAlignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(defaultPadding * 2),
       ),
       child: Stack(

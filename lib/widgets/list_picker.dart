@@ -76,7 +76,7 @@ class _ListPickerState extends State<ListPicker> {
                             )
                     : widget.defaultTextStyle ??
                         Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).colorScheme.tertiary,
                             ),
               ),
             );
