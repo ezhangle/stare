@@ -3,16 +3,25 @@ import 'package:flutter/rendering.dart';
 
 class ListPicker extends StatefulWidget {
   final double width;
+  final double? height;
+  final double? itemExtent;
   final List<String> items;
   final int? defaultIndex;
   final Function(int)? onChanged;
 
+  final TextStyle? selectedTextStyle;
+  final TextStyle? defaultTextStyle;
+
   const ListPicker({
     Key? key,
-    required this.items,
+    this.height,
     required this.width,
+    required this.items,
+    this.itemExtent,
     this.defaultIndex,
     this.onChanged,
+    this.selectedTextStyle,
+    this.defaultTextStyle,
   }) : super(key: key);
 
   @override
@@ -22,43 +31,57 @@ class ListPicker extends StatefulWidget {
 class _ListPickerState extends State<ListPicker> {
   late final double _itemExtent;
   late final ScrollController _scrollController;
+  late final double _defaultExtent;
 
   late int _focusedElement;
 
   @override
   void initState() {
     super.initState();
-    _itemExtent = widget.width / 3;
+
+    _itemExtent = widget.itemExtent ?? widget.width / 3;
     _focusedElement = widget.defaultIndex ?? 0;
     _scrollController = ScrollController(
-      initialScrollOffset: _itemExtent * _focusedElement,
+      initialScrollOffset: (_itemExtent * 1.55 - (widget.width / 2)) +
+          (_itemExtent * _focusedElement),
     );
+    _defaultExtent = (_itemExtent * 1.5) - (widget.width / 2);
   }
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener(
-      onNotification: _onNotification,
-      child: ListView.builder(
-        itemCount: widget.items.length,
-        itemExtent: widget.width / 3,
-        physics: const BouncingScrollPhysics(),
-        controller: _scrollController,
-        padding: EdgeInsets.symmetric(horizontal: widget.width / 3),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          final bool focused = index == _focusedElement;
-          return Text(
-            widget.items[index].toUpperCase(),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: focused
-                      ? Theme.of(context).colorScheme.onBackground
-                      : Theme.of(context).colorScheme.tertiary,
-                ),
-          );
-        },
+    return SizedBox(
+      height: widget.height,
+      width: widget.width,
+      child: NotificationListener(
+        onNotification: _onNotification,
+        child: ListView.builder(
+          itemCount: widget.items.length,
+          itemExtent: _itemExtent,
+          physics: const ClampingScrollPhysics(),
+          controller: _scrollController,
+          padding: EdgeInsets.symmetric(horizontal: _itemExtent),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            final bool focused = index == _focusedElement;
+            return Align(
+              alignment: Alignment.center,
+              child: Text(
+                widget.items[index],
+                textAlign: TextAlign.center,
+                style: focused
+                    ? widget.selectedTextStyle ??
+                        Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                    : widget.defaultTextStyle ??
+                        Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: Theme.of(context).colorScheme.background,
+                            ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -70,7 +93,8 @@ class _ListPickerState extends State<ListPicker> {
   }
 
   _animateTo(int index, {int durationMillis = 200}) {
-    final double targetExtent = index * _itemExtent;
+    final double targetExtent = _defaultExtent + _itemExtent * index;
+
     _scrollController.animateTo(
       targetExtent,
       duration: Duration(milliseconds: durationMillis),
@@ -97,5 +121,11 @@ class _ListPickerState extends State<ListPicker> {
       }
     }
     return true;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }
