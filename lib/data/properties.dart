@@ -12,15 +12,15 @@ const List<String> performOptions = [
   "Sleep",
 ];
 const List<String> months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  'JAN',
+  'FEB',
+  'MAR',
+  'APR',
+  'JUN',
+  'JUL',
+  'AUG',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DEC'
 ];

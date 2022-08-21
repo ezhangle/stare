@@ -20,16 +20,16 @@ final TextStyle headline = baseTextStyle.copyWith(
   fontSize: 48,
   fontWeight: FontWeight.w800,
 );
-final TextStyle title = baseTextStyle.copyWith(
-  fontSize: 32,
-  fontWeight: FontWeight.w600,
-);
 final TextStyle label = baseTextStyle.copyWith(
   fontSize: 32,
   fontWeight: FontWeight.w400,
 );
+final TextStyle title = baseTextStyle.copyWith(
+  fontSize: 32,
+  fontWeight: FontWeight.w400,
+);
 final TextStyle body = baseTextStyle.copyWith(
-  fontSize: 24,
+  fontSize: 20,
   height: 1.5,
   color: darkGrey,
   fontWeight: FontWeight.w400,

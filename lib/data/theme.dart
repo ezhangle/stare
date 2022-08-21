@@ -23,10 +23,10 @@ final ThemeData lightTheme = ThemeData(
     labelSmall: label.copyWith(fontSize: 24),
     titleLarge: title,
     titleMedium: title.copyWith(fontSize: 24),
-    titleSmall: title.copyWith(fontSize: 18, fontWeight: FontWeight.w400),
+    titleSmall: title.copyWith(fontSize: 18),
     bodyLarge: body,
-    bodyMedium: body.copyWith(fontSize: 20),
-    bodySmall: body.copyWith(fontSize: 16),
+    bodyMedium: body.copyWith(fontSize: 16),
+    bodySmall: body.copyWith(fontSize: 12),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -39,5 +39,9 @@ final ThemeData lightTheme = ThemeData(
       ),
     ),
   ),
-  dividerColor: lightGrey,
+  dividerTheme: const DividerThemeData(
+    thickness: 1,
+    space: 0,
+    color: lightGrey,
+  ),
 );
