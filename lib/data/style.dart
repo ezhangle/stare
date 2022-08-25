@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // * color pallete
 const Color lightGrey = Color(0xfff2f2f2);
-const Color grey = Color(0xffe8e8e8);
+const Color grey = Color(0xffcccccc);
 const Color darkGrey = Color(0xff545454);
 const Color darkerGrey = Color(0xff1a1a1a);
 
@@ -26,7 +26,7 @@ final TextStyle label = baseTextStyle.copyWith(
 );
 final TextStyle title = baseTextStyle.copyWith(
   fontSize: 32,
-  fontWeight: FontWeight.w400,
+  fontWeight: FontWeight.w600,
 );
 final TextStyle body = baseTextStyle.copyWith(
   fontSize: 20,
@@ -37,3 +37,6 @@ final TextStyle body = baseTextStyle.copyWith(
 
 // * size and spacing
 const double defaultPadding = 16.0;
+
+// * animation
+const Duration defaultTransitionDuration = Duration(milliseconds: 200);
