@@ -29,13 +29,13 @@ class _PushButtonState extends State<PushButton> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffa8a8a8), Color(0xffd8d8d8)],
+              colors: [Color(0xffa8a8a8), Color(0xfff2f2f2)],
             ),
           ),
         ),
         Container(
-          width: widget.size - 10,
-          height: widget.size - 10,
+          width: widget.size - 8,
+          height: widget.size - 8,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
@@ -45,14 +45,14 @@ class _PushButtonState extends State<PushButton> {
             gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xfff2f2f2), Color(0xffa2a2a2)],
+              colors: [Color(0xfff2f2f2), Color(0xff8f8f8f)],
             ),
           ),
         ),
         AnimatedContainer(
           duration: const Duration(milliseconds: 100),
-          width: widget.size - 20,
-          height: widget.size - 20,
+          width: widget.size - 16,
+          height: widget.size - 16,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
@@ -67,8 +67,8 @@ class _PushButtonState extends State<PushButton> {
           alignment: Alignment.center,
           child: SvgPicture.asset(
             "assets/icons/off.svg",
-            height: widget.size - 35,
-            width: widget.size - 35,
+            height: widget.size - 32,
+            width: widget.size - 32,
           ),
         ),
         GestureDetector(
