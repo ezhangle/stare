@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rive/rive.dart';
-import 'package:stare/widgets/tilted_pushbutton.dart';
-import 'package:stare/widgets/utils.dart';
 
+import 'utils.dart';
 import '../data/style.dart';
+import 'tilted_pushbutton.dart';
 import 'led_number_display.dart';
 
 class DigitalClock extends StatefulWidget {
@@ -22,27 +21,15 @@ class DigitalClock extends StatefulWidget {
 }
 
 class _DigitalClockState extends State<DigitalClock> {
-  late final RiveAnimationController _hourPlusBtnController;
-  late final RiveAnimationController _hourMinusBtnController;
-  late final RiveAnimationController _minutePlusBtnController;
-  late final RiveAnimationController _minuteMinusBtnController;
-
   late int hour;
   late int minute;
 
   @override
   void initState() {
     super.initState();
-
     // init hour and minute
     hour = widget.hour;
     minute = widget.minute;
-
-    // animation controllers
-    _minutePlusBtnController = OneShotAnimation("push", autoplay: false);
-    _minuteMinusBtnController = OneShotAnimation("push", autoplay: false);
-    _hourMinusBtnController = OneShotAnimation("push", autoplay: false);
-    _hourPlusBtnController = OneShotAnimation("push", autoplay: false);
   }
 
   @override
@@ -71,40 +58,32 @@ class _DigitalClockState extends State<DigitalClock> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       TiltedPushButton(
-                        artboard: "plus-button",
-                        animationController: _hourPlusBtnController,
+                        iconName: "plus-icon",
                         onTapDown: () {
-                          _hourPlusBtnController.isActive = true;
                           if (hour == 24) return;
                           setState(() => hour += 1);
                         },
                       ),
                       const SizedBox(width: defaultPadding / 2),
                       TiltedPushButton(
-                        artboard: "minus-button",
-                        animationController: _hourMinusBtnController,
+                        iconName: "minus-icon",
                         onTapDown: () {
-                          _hourMinusBtnController.isActive = true;
                           if (hour == 1) return;
                           setState(() => hour -= 1);
                         },
                       ),
                       const SmallRowGap(),
                       TiltedPushButton(
-                        artboard: "plus-button",
-                        animationController: _minutePlusBtnController,
+                        iconName: "plus-icon",
                         onTapDown: () {
-                          _minutePlusBtnController.isActive = true;
                           if (minute == 59) return;
                           setState(() => minute += 1);
                         },
                       ),
                       const SizedBox(width: defaultPadding / 2),
                       TiltedPushButton(
-                        artboard: "minus-button",
-                        animationController: _minuteMinusBtnController,
+                        iconName: "minus-icon",
                         onTapDown: () {
-                          _minuteMinusBtnController.isActive = true;
                           if (minute == 0) return;
                           setState(() => minute -= 1);
                         },
@@ -142,10 +121,6 @@ class _DigitalClockState extends State<DigitalClock> {
 
   @override
   void dispose() {
-    _hourPlusBtnController.dispose();
-    _hourMinusBtnController.dispose();
-    _minutePlusBtnController.dispose();
-    _minuteMinusBtnController.dispose();
     super.dispose();
   }
 }
