@@ -18,6 +18,14 @@ class SmallColumnGap extends StatelessWidget {
   Widget build(BuildContext context) => const SizedBox(height: defaultPadding);
 }
 
+class RowGap extends StatelessWidget {
+  const RowGap({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+      const SizedBox(width: defaultPadding * 2);
+}
+
 class SmallRowGap extends StatelessWidget {
   const SmallRowGap({Key? key}) : super(key: key);
 
