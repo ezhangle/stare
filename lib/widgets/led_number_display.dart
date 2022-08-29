@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:stare/widgets/utils.dart';
 
 import '../data/properties.dart';
 import '../data/style.dart';
@@ -8,14 +6,18 @@ import '../data/style.dart';
 class DoubleLEDNumberDisplay extends StatelessWidget {
   final int value;
   final double segmentWidth;
+  final bool showZeroInTenthsPlace;
 
-  const DoubleLEDNumberDisplay(
-      {Key? key, required this.value, this.segmentWidth = defaultPadding})
-      : super(key: key);
+  const DoubleLEDNumberDisplay({
+    Key? key,
+    required this.value,
+    this.segmentWidth = defaultPadding,
+    this.showZeroInTenthsPlace = false,
+  }) : super(key: key);
 
   int get _tenthsPlace {
     if (value < 10) {
-      return 10;
+      return showZeroInTenthsPlace ? 0 : 10;
     } else {
       return (value / 10).floor();
     }
@@ -35,7 +37,7 @@ class DoubleLEDNumberDisplay extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         SingleLEDNumberDisplay(value: _tenthsPlace, segmentWidth: segmentWidth),
-        const SmallRowGap(),
+        SizedBox(width: segmentWidth / 2),
         SingleLEDNumberDisplay(value: _onesPlace, segmentWidth: segmentWidth),
       ],
     );
