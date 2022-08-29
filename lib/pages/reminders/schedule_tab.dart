@@ -21,32 +21,22 @@ class ScheduleTab extends StatelessWidget {
         ),
         const Divider(),
         PanelItem(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                "Days",
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SmallColumnGap(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[
-                  DayLabel("M", selected: true),
-                  DayLabel("T", selected: true),
-                  DayLabel("W", selected: false),
-                  DayLabel("T", selected: true),
-                  DayLabel("F", selected: true),
-                  DayLabel("S", selected: true),
-                  DayLabel("S", selected: false),
-                ],
-              ),
-              const SmallColumnGap(),
+          title: "Days",
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const <Widget>[
+              DayLabel("M", selected: true),
+              DayLabel("T", selected: true),
+              DayLabel("W", selected: false),
+              DayLabel("T", selected: true),
+              DayLabel("F", selected: true),
+              DayLabel("S", selected: true),
+              DayLabel("S", selected: false),
             ],
           ),
         ),
         const Divider(),
-        const PanelItem(
+        const RawPanelItem(
           child: ScheduleView(),
         ),
       ],
