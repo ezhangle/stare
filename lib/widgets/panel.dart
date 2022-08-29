@@ -12,7 +12,7 @@ class Panel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      margin: const EdgeInsets.all(defaultPadding),
+      margin: const EdgeInsets.symmetric(horizontal: defaultPadding),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(defaultPadding / 2),
         color: Theme.of(context).colorScheme.onPrimary,
@@ -49,7 +49,7 @@ class PanelTitleItem extends StatelessWidget {
           leading ?? const SizedBox(),
           leading != null ? const SmallRowGap() : const SizedBox(),
           Text(
-            "Follow Schedule",
+            title,
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const Spacer(),
@@ -61,9 +61,44 @@ class PanelTitleItem extends StatelessWidget {
 }
 
 class PanelItem extends StatelessWidget {
+  final String title;
+  final Widget child;
+  final Alignment childAlign;
+
+  const PanelItem(
+      {Key? key,
+      required this.title,
+      required this.child,
+      this.childAlign = Alignment.center})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: defaultPadding * 1.5,
+        vertical: defaultPadding,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          const SmallColumnGap(),
+          Align(alignment: childAlign, child: child),
+          const SmallColumnGap(),
+        ],
+      ),
+    );
+  }
+}
+
+class RawPanelItem extends StatelessWidget {
   final Widget child;
 
-  const PanelItem({Key? key, required this.child}) : super(key: key);
+  const RawPanelItem({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
