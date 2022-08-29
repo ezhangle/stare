@@ -96,3 +96,48 @@ class NextButton extends StatelessWidget {
     );
   }
 }
+
+class SimpleLabel extends StatelessWidget {
+  final String text;
+  final bool roundedTop;
+  final bool highlighted;
+  final bool roundedBottom;
+  final double bottomMargin;
+
+  const SimpleLabel({
+    Key? key,
+    required this.text,
+    this.bottomMargin = 1.0,
+    this.roundedTop = false,
+    this.highlighted = false,
+    this.roundedBottom = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: bottomMargin),
+      padding: const EdgeInsets.all(defaultPadding),
+      decoration: BoxDecoration(
+        color: highlighted
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.onPrimary,
+        borderRadius: BorderRadius.vertical(
+          top: roundedTop ? const Radius.circular(defaultPadding) : Radius.zero,
+          bottom: roundedBottom
+              ? const Radius.circular(defaultPadding)
+              : Radius.zero,
+        ),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: defaultPadding * 0.75,
+          color: highlighted
+              ? Theme.of(context).colorScheme.onPrimary
+              : Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+}
