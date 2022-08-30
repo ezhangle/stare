@@ -24,7 +24,7 @@ const List<String> months = [
   'NOV',
   'DEC'
 ];
-const Map<int, List<bool>> clockLabels = {
+const Map<int, List<bool>> ledNumberDisplay = {
   0: [true, true, true, false, true, true, true],
   1: [false, false, true, false, false, true, false],
   2: [true, false, true, true, true, false, true],
@@ -37,3 +37,12 @@ const Map<int, List<bool>> clockLabels = {
   9: [true, true, true, true, false, true, true],
   10: [false, false, false, false, false, false, false],
 };
+const List<String> alarmSounds = [
+  "Choose your own >",
+  "Drumbeats",
+  "Rooster",
+  "Tinkle",
+  "Claps",
+  "Bells",
+  "Heavy Metal"
+];
