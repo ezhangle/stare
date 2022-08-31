@@ -14,10 +14,10 @@ final ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: lightGrey,
   fontFamily: "Poppins",
   textTheme: TextTheme(
-    displayLarge: display,
+    // displayLarge: display,
     headlineLarge: headline,
-    headlineMedium: headline.copyWith(fontSize: 44),
-    headlineSmall: headline.copyWith(fontSize: 40),
+    headlineMedium: headline.copyWith(fontSize: 40),
+    headlineSmall: headline.copyWith(fontSize: 36),
     labelLarge: label,
     labelMedium: label.copyWith(fontSize: 28),
     labelSmall: label.copyWith(fontSize: 24),

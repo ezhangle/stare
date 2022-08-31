@@ -12,16 +12,17 @@ const TextStyle baseTextStyle = TextStyle(
   fontFamily: "Poppins",
   color: Colors.black,
 );
-final TextStyle display = baseTextStyle.copyWith(
-  fontSize: 64,
-  fontWeight: FontWeight.w800,
-);
+// final TextStyle display = baseTextStyle.copyWith(
+//   fontSize: 56,
+//   fontWeight: FontWeight.w800,
+// );
 final TextStyle headline = baseTextStyle.copyWith(
-  fontSize: 48,
+  fontSize: 44,
   fontWeight: FontWeight.w800,
 );
 final TextStyle label = baseTextStyle.copyWith(
   fontSize: 32,
+  letterSpacing: 0,
   fontWeight: FontWeight.w400,
 );
 final TextStyle title = baseTextStyle.copyWith(
@@ -32,6 +33,7 @@ final TextStyle body = baseTextStyle.copyWith(
   fontSize: 20,
   height: 1.5,
   color: darkGrey,
+  letterSpacing: 0,
   fontWeight: FontWeight.w400,
 );
 
