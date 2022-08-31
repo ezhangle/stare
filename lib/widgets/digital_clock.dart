@@ -110,7 +110,10 @@ class _DigitalClockState extends State<DigitalClock> {
               children: <Widget>[
                 DoubleLEDNumberDisplay(value: hour),
                 const _ClockSeperator(),
-                DoubleLEDNumberDisplay(value: minute),
+                DoubleLEDNumberDisplay(
+                  value: minute,
+                  showZeroInTenthsPlace: true,
+                ),
               ],
             ),
           ),
