@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stare/data/properties.dart';
+import 'package:stare/data/style.dart';
+import 'package:stare/widgets/animated_labels.dart';
 
 class MoodSlider extends StatefulWidget {
   final Color color;
@@ -16,6 +18,7 @@ class MoodSlider extends StatefulWidget {
     this.width = 256,
     this.height = 128,
     this.thumbSize = 32,
+    // TODO: trackHeight as much as illustration/rive-animation stroke width
     this.trackHeight = 4,
   }) : super(key: key);
 
@@ -27,6 +30,7 @@ class _MoodSliderState extends State<MoodSlider>
     with SingleTickerProviderStateMixin {
   late final double _trackStart;
   late final double _trackEnd;
+  late final double _divisionExtent;
   late Offset _dragPosition;
 
   // animation
@@ -38,7 +42,8 @@ class _MoodSliderState extends State<MoodSlider>
 
   bool _dragging = false;
 
-  double sliderValue = 50;
+  // mood
+  late String _mood;
 
   @override
   void initState() {
@@ -46,7 +51,17 @@ class _MoodSliderState extends State<MoodSlider>
 
     _trackStart = widget.width * 0.2;
     _trackEnd = widget.width * 0.8;
-    _dragPosition = Offset(_trackStart, 0);
+    _divisionExtent = (_trackEnd - _trackStart) / moods.length;
+
+    debugPrint("Extent $_divisionExtent | End $_trackEnd");
+
+    //                                 default mood index 👇
+    _dragPosition = Offset(_trackStart + _divisionExtent * 4, 0);
+    // intial mood is previous mood of the day
+    // and calm (none) for a new day
+    _mood = moods[4];
+
+    // animation
     _animationBegin = _animationEnd = widget.height / 2;
 
     _animationController = AnimationController(
@@ -93,13 +108,15 @@ class _MoodSliderState extends State<MoodSlider>
               ),
             ),
             Positioned(
-              top: -40,
-              left: _dragPosition.dx,
-              child: Transform.translate(
-                offset: Offset(-56, 0),
-                child: Text(
-                  moods[0],
-                  style: Theme.of(context).textTheme.labelSmall,
+              top: -defaultPadding * 2,
+              left: _dragPosition.dx - 72,
+              child: Container(
+                width: 144,
+                alignment: Alignment.center,
+                child: AnimatedLabel(
+                  text: _mood,
+                  duration: defaultTransitionDuration,
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
             ),
@@ -144,7 +161,7 @@ class _MoodSliderState extends State<MoodSlider>
     }
     // X Axis
     if (_dragPosition.dx >= _trackEnd) {
-      _dragPosition = Offset(_trackEnd, _dragPosition.dy);
+      _dragPosition = Offset(_trackEnd - 1, _dragPosition.dy);
     } else if (_dragPosition.dx <= _trackStart) {
       _dragPosition = Offset(_trackStart, _dragPosition.dy);
     }
@@ -155,7 +172,16 @@ class _MoodSliderState extends State<MoodSlider>
       _dragging = true;
       _dragPosition = details.localPosition;
       _clampDragPosition();
-      widget.onChange?.call(_dragPosition.dx / widget.width);
+      // TODO: see if clamping can be undone
+      final int _index = (_dragPosition.dx - _trackStart) ~/ _divisionExtent;
+
+      if (_index == moods.length) {
+        print(_index);
+        print(_dragPosition.dx);
+        return;
+      }
+
+      _mood = moods[_index];
     });
   }
 
