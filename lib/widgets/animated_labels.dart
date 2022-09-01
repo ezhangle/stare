@@ -1,86 +1,127 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class AnimatedLabel extends StatefulWidget {
-  final String defaultValue;
-  final TextStyle? textStyle;
-
+class AnimatedLabel extends ImplicitlyAnimatedWidget {
   const AnimatedLabel({
     Key? key,
+    required this.text,
     this.textStyle,
-    required this.defaultValue,
-  }) : super(key: key);
+    this.offsetY = 32,
+    Curve curve = Curves.linear,
+    required Duration duration,
+    VoidCallback? onEnd,
+  }) : super(
+          key: key,
+          curve: curve,
+          duration: duration,
+          onEnd: onEnd,
+        );
+
+  final String text;
+  final double offsetY;
+  final TextStyle? textStyle;
 
   @override
-  State<AnimatedLabel> createState() => AnimatedLabelState();
+  ImplicitlyAnimatedWidgetState<AnimatedLabel> createState() =>
+      _AnimatedTestWidgetState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('text', text));
+  }
 }
 
-class AnimatedLabelState extends State<AnimatedLabel> {
-  String firstText = "";
-  double firstY = -1.25;
-  late String secondText;
-  double secondY = 0;
+class _AnimatedTestWidgetState
+    extends ImplicitlyAnimatedWidgetState<AnimatedLabel> {
+  late final Alignment _stackAlignment;
+
+  String _firstText = "";
+  String _secondText = "";
+
+  double _animationEnd = 0;
+
+  // animation
+  Tween<double>? _tween;
+  late Animation<double> _tweenAnimation;
 
   @override
   void initState() {
-    secondText = widget.defaultValue;
     super.initState();
+    _firstText = _secondText = widget.text;
   }
 
-  void change(String label) {
-    setState(() {
-      if (firstY == 0) {
-        secondText = label;
-        secondY = 0;
-        firstY = 1.4;
-      } else {
-        firstText = label;
-        firstY = 0;
-        secondY = 1.4;
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    if (_animationEnd == 0) {
+      // _secondText in center
+      if (_secondText != widget.text) {
+        _firstText = widget.text;
+        _animationEnd = 1;
       }
-    });
+    } else if (_animationEnd == 1) {
+      // _firstText in center
+      if (_firstText != widget.text) {
+        _secondText = widget.text;
+        _animationEnd = 0;
+      }
+    }
+
+    _tween = visitor(_tween, _animationEnd,
+            (dynamic value) => Tween<double>(begin: value as double))
+        as Tween<double>?;
+  }
+
+  @override
+  void didUpdateTweens() {
+    _tweenAnimation = animation.drive(_tween!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        AnimatedSlide(
-          curve: Curves.easeOutCubic,
-          duration: const Duration(milliseconds: 400),
-          offset: Offset(0, firstY),
-          onEnd: () {
-            if (firstY == 1.4) {
-              setState(() {
-                firstY = -1.4;
-              });
-            }
-          },
-          child: AnimatedOpacity(
-              curve: Curves.easeOutCubic,
-              duration: const Duration(milliseconds: 400),
-              opacity: firstY == 0 ? 1 : 0,
-              child: Text(firstText, style: widget.textStyle)),
-        ),
-        AnimatedSlide(
-          curve: Curves.easeOutCubic,
-          duration: const Duration(milliseconds: 400),
-          offset: Offset(0, secondY),
-          onEnd: () {
-            if (secondY == 1.4) {
-              setState(() {
-                secondY = -1.4;
-              });
-            }
-          },
-          child: AnimatedOpacity(
-            curve: Curves.easeOutCubic,
-            duration: const Duration(milliseconds: 400),
-            opacity: secondY == 0 ? 1 : 0,
-            child: Text(secondText, style: widget.textStyle),
-          ),
-        ),
-      ],
+    return AnimatedBuilder(
+      animation: _tweenAnimation,
+      builder: (_, __) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            Transform.translate(
+              offset: Offset(
+                0,
+                _animationEnd == 1
+                    ? -widget.offsetY * (1 - _tweenAnimation.value)
+                    : widget.offsetY * (1 - _tweenAnimation.value),
+              ),
+              child: Opacity(
+                opacity: _tweenAnimation.value,
+                child: Text(
+                  textAlign: TextAlign.center,
+                  _firstText,
+                  style: widget.textStyle ??
+                      Theme.of(context).textTheme.labelLarge,
+                ),
+              ),
+            ),
+            Transform.translate(
+              offset: Offset(
+                0,
+                _animationEnd == 1
+                    ? widget.offsetY * _tweenAnimation.value
+                    : -widget.offsetY * _tweenAnimation.value,
+              ),
+              child: Opacity(
+                opacity: 1 - _tweenAnimation.value,
+                child: Text(
+                  _secondText,
+                  textAlign: TextAlign.center,
+                  style: widget.textStyle ??
+                      Theme.of(context).textTheme.labelLarge,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
