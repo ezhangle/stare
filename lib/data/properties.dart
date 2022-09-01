@@ -1,3 +1,12 @@
+const List<String> moods = [
+  "Do Not Disturb",
+  "Angry",
+  "Sad",
+  "Tired",
+  "Calm",
+  "Happy",
+  "Delighted",
+];
 const List<String> exerciseOptions = [
   "Eye",
   "Posture",
