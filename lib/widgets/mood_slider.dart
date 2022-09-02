@@ -9,7 +9,7 @@ class MoodSlider extends StatefulWidget {
   final double height;
   final double thumbSize;
   final double trackHeight;
-  final Function(double)? onChange;
+  final Function(String)? onChange;
 
   const MoodSlider({
     Key? key,
@@ -31,6 +31,8 @@ class _MoodSliderState extends State<MoodSlider>
   late final double _trackStart;
   late final double _trackEnd;
   late final double _divisionExtent;
+  late final double _labelPaddingLeft;
+  late final double _labelPaddingRight;
   late Offset _dragPosition;
 
   // animation
@@ -49,11 +51,13 @@ class _MoodSliderState extends State<MoodSlider>
   void initState() {
     super.initState();
 
-    _trackStart = widget.width * 0.2;
-    _trackEnd = widget.width * 0.8;
+    _trackStart = widget.width * 0.1;
+    _trackEnd = widget.width * 0.9;
     _divisionExtent = (_trackEnd - _trackStart) / moods.length;
 
-    debugPrint("Extent $_divisionExtent | End $_trackEnd");
+    _labelPaddingLeft = defaultPadding;
+    //                                 👇 label container width
+    _labelPaddingRight = widget.width - 144 - defaultPadding;
 
     //                                 default mood index 👇
     _dragPosition = Offset(_trackStart + _divisionExtent * 4, 0);
@@ -109,7 +113,8 @@ class _MoodSliderState extends State<MoodSlider>
             ),
             Positioned(
               top: -defaultPadding * 2,
-              left: _dragPosition.dx - 72,
+              left: (_dragPosition.dx - 72)
+                  .clamp(_labelPaddingLeft, _labelPaddingRight),
               child: Container(
                 width: 144,
                 alignment: Alignment.center,
@@ -172,16 +177,12 @@ class _MoodSliderState extends State<MoodSlider>
       _dragging = true;
       _dragPosition = details.localPosition;
       _clampDragPosition();
-      // TODO: see if clamping can be undone
-      final int _index = (_dragPosition.dx - _trackStart) ~/ _divisionExtent;
 
-      if (_index == moods.length) {
-        print(_index);
-        print(_dragPosition.dx);
-        return;
+      final int index = (_dragPosition.dx - _trackStart) ~/ _divisionExtent;
+      if (_mood != moods[index]) {
+        _mood = moods[index];
+        widget.onChange?.call(_mood);
       }
-
-      _mood = moods[_index];
     });
   }
 
