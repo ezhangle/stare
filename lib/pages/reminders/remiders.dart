@@ -5,6 +5,8 @@ import '../../data/style.dart';
 import '../../widgets/utils.dart';
 import '../../widgets/list_picker.dart';
 
+const List<String> tabs = ["Sedentary Alert", "Bedtime", "Schedule"];
+
 class RemindersPage extends StatelessWidget {
   const RemindersPage({Key? key}) : super(key: key);
 
@@ -35,11 +37,25 @@ class RemindersPage extends StatelessWidget {
             width: width,
             height: defaultPadding * 2,
             itemExtent: width / 2,
-            items: const <String>["Sedentary Alert", "Bedtime", "Schedule"],
-            selectedTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onBackground,
-                  fontWeight: FontWeight.w600,
+            itemCount: tabs.length,
+            itemBuilder: (index, focusedElementIndex) {
+              final bool focused = index == focusedElementIndex;
+              return Align(
+                alignment: Alignment.center,
+                child: Text(
+                  tabs[index],
+                  textAlign: TextAlign.center,
+                  style: focused
+                      ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onBackground,
+                            fontWeight: FontWeight.w600,
+                          )
+                      : Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
                 ),
+              );
+            },
           ),
         ),
         const ColumnGap(),

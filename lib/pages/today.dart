@@ -114,8 +114,27 @@ class _CalendarViewState extends State<_CalendarView> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               return ListPicker(
+                itemCount: months.length,
                 width: constraints.maxWidth,
-                items: months,
+                itemBuilder: (index, focusedElementIndex) {
+                  final bool focused = index == focusedElementIndex;
+                  return Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      months[index],
+                      textAlign: TextAlign.center,
+                      style: focused
+                          ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
+                                fontWeight: FontWeight.w600,
+                              )
+                          : Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
+                    ),
+                  );
+                },
               );
             },
           ),
