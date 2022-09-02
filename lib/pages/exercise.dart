@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stare/data/properties.dart';
 
 import '../data/style.dart';
 import '../widgets/actions_listview.dart';
@@ -26,7 +27,13 @@ class ExercisePage extends StatelessWidget {
         const ColumnGap(),
         SizedBox(
           height: 304,
-          child: ActionsListView(width: MediaQuery.of(context).size.width),
+          child: Align(
+            alignment: Alignment.center,
+            child: ActionsListView(
+              width: MediaQuery.of(context).size.width,
+              items: exerciseOptions,
+            ),
+          ),
         ),
         const ColumnGap(),
         const Align(

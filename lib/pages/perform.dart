@@ -24,10 +24,10 @@ class PerformPage extends StatelessWidget {
           ),
         ),
         const ColumnGap(),
-        SizedBox(
-          height: 304,
-          child: ActionsListView(width: MediaQuery.of(context).size.width),
-        ),
+        // SizedBox(
+        //   height: 304,
+        //   child: ActionsListView(width: MediaQuery.of(context).size.width),
+        // ),
         const ColumnGap(),
         const Align(
           alignment: Alignment.center,

@@ -3,96 +3,137 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../data/style.dart';
 
+const _animationDuration = Duration(milliseconds: 600);
+
 class ActionsListView extends StatefulWidget {
   final double width;
-  // final List<String> items;
+  final double? height;
+  final double? itemExtent;
+  final List<String> items;
+  final int? defaultIndex;
+  final double swipeThreshold;
   final Function(int)? onChanged;
+
+  final TextStyle? selectedTextStyle;
+  final TextStyle? defaultTextStyle;
 
   const ActionsListView({
     Key? key,
+    this.height,
     required this.width,
+    required this.items,
+    this.itemExtent,
+    this.defaultIndex,
     this.onChanged,
-    // required this.items,
+    this.selectedTextStyle,
+    this.defaultTextStyle,
+    this.swipeThreshold = 100,
   }) : super(key: key);
 
   @override
-  State<ActionsListView> createState() => _ActionsListViewState();
+  State<ActionsListView> createState() => _ListPickerState();
 }
 
-class _ActionsListViewState extends State<ActionsListView> {
-  int focusedElement = 1;
-  final double itemExtent = 278;
+class _ListPickerState extends State<ActionsListView> {
+  final double _itemExtent = 272;
+
+  late final double _defaultExtent;
   late final ScrollController _scrollController;
+
+  late int _focusedElement;
+  double _startDx = 0;
+  double _endDx = 0;
 
   @override
   void initState() {
     super.initState();
+
+    _focusedElement = widget.defaultIndex ?? 0;
     _scrollController = ScrollController(
-      initialScrollOffset: itemExtent * 1.55 - (widget.width / 2),
+      initialScrollOffset: (_itemExtent * 1.55 - (widget.width / 2)) +
+          (_itemExtent * _focusedElement),
     );
+    _defaultExtent = (_itemExtent * 1.5) - (widget.width / 2);
   }
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener(
-      onNotification: _onNotification,
-      child: ListView.builder(
-        itemCount: 4,
-        itemExtent: itemExtent,
-        clipBehavior: Clip.none,
-        controller: _scrollController,
-        // itemCount: widget.items.length,
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: itemExtent),
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-            child: GestureDetector(
-              onTap: () {
-                _scrollController.animateTo(
-                  itemExtent * 0.8 + index * itemExtent,
-                  duration: const Duration(milliseconds: 600),
-                  curve: Curves.easeOutBack,
-                );
-              },
-              child: ActionCard(
-                index: index + 1,
-                focusedElement: focusedElement,
-              ),
-            ),
-          );
-        },
+    return GestureDetector(
+      onTap: () {
+        setState(() => _focusedElement == widget.items.length - 1
+            ? _focusedElement = 0
+            : _focusedElement = _focusedElement + 1);
+
+        _animateTo(_focusedElement);
+      },
+      onHorizontalDragStart: (details) => _startDx = details.localPosition.dx,
+      onHorizontalDragUpdate: (details) => _endDx = details.localPosition.dx,
+      onHorizontalDragEnd: (details) {
+        final double distance = _startDx - _endDx;
+
+        if (distance.abs() >= widget.swipeThreshold) {
+          if (distance < 0 && _focusedElement != 0) {
+            // swiped in right direction
+            setState(() => _focusedElement -= 1);
+          } else if (_focusedElement != widget.items.length - 1) {
+            //&& distance > 0
+            // swiped in left direction
+            setState(() => _focusedElement += 1);
+          }
+          _animateTo(_focusedElement);
+        }
+      },
+      child: SizedBox(
+        height: widget.height,
+        width: widget.width,
+        child: ListView.builder(
+            clipBehavior: Clip.none,
+            itemExtent: _itemExtent,
+            controller: _scrollController,
+            itemCount: widget.items.length,
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: _itemExtent),
+            itemBuilder: (_, index) {
+              return _ActionCard(
+                label: widget.items[index],
+                index: index,
+                focusedElement: _focusedElement,
+              );
+            }),
       ),
     );
   }
 
-  int _offsetToMiddleIndex(double offset) =>
-      (offset + widget.width / 2) ~/ itemExtent;
+  _animateTo(int index) {
+    final double targetExtent = _defaultExtent + _itemExtent * index;
 
-  bool _onNotification(Notification notification) {
-    if (notification is ScrollNotification) {
-      final middleIndex = _offsetToMiddleIndex(notification.metrics.pixels);
+    _scrollController.animateTo(
+      targetExtent,
+      duration: _animationDuration,
+      curve: Curves.easeOutBack,
+    );
+  }
 
-      if (middleIndex != focusedElement) {
-        setState(() {
-          focusedElement = middleIndex;
-        });
-        widget.onChanged?.call(focusedElement);
-      }
-    }
-
-    return true;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }
 
-class ActionCard extends StatelessWidget {
+class _ActionCard extends StatelessWidget {
   final int index;
   final int focusedElement;
+  final String label;
+  final double width;
 
-  const ActionCard({
+  const _ActionCard({
     Key? key,
+    required this.label,
     required this.index,
     required this.focusedElement,
+    this.width = 240,
   }) : super(key: key);
 
   double _rotation() {
@@ -108,10 +149,11 @@ class ActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 600),
+      duration: _animationDuration,
       curve: Curves.easeOutBack,
-      width: 246,
-      height: 304,
+      width: width,
+      height: width * 1.25,
+      margin: const EdgeInsets.symmetric(horizontal: defaultPadding),
       transform: Matrix4.identity()
         ..rotateZ(_rotation())
         ..translate(0.0, index == focusedElement ? 0.0 : 32.0),
@@ -126,7 +168,7 @@ class ActionCard extends StatelessWidget {
             top: defaultPadding * 2,
             left: defaultPadding * 2,
             child: Text(
-              "Eye",
+              label,
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ),
@@ -142,15 +184,6 @@ class ActionCard extends StatelessWidget {
               ),
             ),
           ),
-          // Positioned(
-          //   bottom: 0,
-          //   left: 121,
-          //   child: Container(
-          //     height: 294,
-          //     width: 4,
-          //     color: Colors.black,
-          //   ),
-          // ),
         ],
       ),
     );
