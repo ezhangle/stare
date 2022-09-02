@@ -5,7 +5,7 @@ class AnimatedLabel extends ImplicitlyAnimatedWidget {
   const AnimatedLabel({
     Key? key,
     required this.text,
-    this.textStyle,
+    this.style,
     this.offsetY = 32,
     Curve curve = Curves.linear,
     required Duration duration,
@@ -19,7 +19,7 @@ class AnimatedLabel extends ImplicitlyAnimatedWidget {
 
   final String text;
   final double offsetY;
-  final TextStyle? textStyle;
+  final TextStyle? style;
 
   @override
   ImplicitlyAnimatedWidgetState<AnimatedLabel> createState() =>
@@ -97,8 +97,7 @@ class _AnimatedTestWidgetState
                 child: Text(
                   textAlign: TextAlign.center,
                   _firstText,
-                  style: widget.textStyle ??
-                      Theme.of(context).textTheme.labelLarge,
+                  style: widget.style ?? Theme.of(context).textTheme.labelLarge,
                 ),
               ),
             ),
@@ -114,8 +113,7 @@ class _AnimatedTestWidgetState
                 child: Text(
                   _secondText,
                   textAlign: TextAlign.center,
-                  style: widget.textStyle ??
-                      Theme.of(context).textTheme.labelLarge,
+                  style: widget.style ?? Theme.of(context).textTheme.labelLarge,
                 ),
               ),
             ),
