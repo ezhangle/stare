@@ -5,23 +5,20 @@ class ListPicker extends StatefulWidget {
   final double width;
   final double? height;
   final double? itemExtent;
-  final List<String> items;
+  final int itemCount;
+  final Widget Function(int index, int focusedElementIndex) itemBuilder;
   final int? defaultIndex;
   final Function(int)? onChanged;
-
-  final TextStyle? selectedTextStyle;
-  final TextStyle? defaultTextStyle;
 
   const ListPicker({
     Key? key,
     this.height,
     required this.width,
-    required this.items,
+    required this.itemCount,
+    required this.itemBuilder,
     this.itemExtent,
     this.defaultIndex,
     this.onChanged,
-    this.selectedTextStyle,
-    this.defaultTextStyle,
   }) : super(key: key);
 
   @override
@@ -33,17 +30,17 @@ class _ListPickerState extends State<ListPicker> {
   late final ScrollController _scrollController;
   late final double _defaultExtent;
 
-  late int _focusedElement;
+  late int _focusedElementIndex;
 
   @override
   void initState() {
     super.initState();
 
     _itemExtent = widget.itemExtent ?? widget.width / 3;
-    _focusedElement = widget.defaultIndex ?? 0;
+    _focusedElementIndex = widget.defaultIndex ?? 0;
     _scrollController = ScrollController(
       initialScrollOffset: (_itemExtent * 1.55 - (widget.width / 2)) +
-          (_itemExtent * _focusedElement),
+          (_itemExtent * _focusedElementIndex),
     );
     _defaultExtent = (_itemExtent * 1.5) - (widget.width / 2);
   }
@@ -56,31 +53,14 @@ class _ListPickerState extends State<ListPicker> {
       child: NotificationListener(
         onNotification: _onNotification,
         child: ListView.builder(
-          itemCount: widget.items.length,
           itemExtent: _itemExtent,
-          physics: const ClampingScrollPhysics(),
+          itemCount: widget.itemCount,
           controller: _scrollController,
-          padding: EdgeInsets.symmetric(horizontal: _itemExtent),
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            final bool focused = index == _focusedElement;
-            return Align(
-              alignment: Alignment.center,
-              child: Text(
-                widget.items[index],
-                textAlign: TextAlign.center,
-                style: focused
-                    ? widget.selectedTextStyle ??
-                        Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                    : widget.defaultTextStyle ??
-                        Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Theme.of(context).colorScheme.tertiary,
-                            ),
-              ),
-            );
-          },
+          physics: const ClampingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: _itemExtent),
+          itemBuilder: (context, index) =>
+              widget.itemBuilder(index, _focusedElementIndex),
         ),
       ),
     );
@@ -113,11 +93,11 @@ class _ListPickerState extends State<ListPicker> {
         _animateTo(middleIndex);
       }
 
-      if (middleIndex != _focusedElement) {
+      if (middleIndex != _focusedElementIndex) {
         setState(() {
-          _focusedElement = middleIndex;
+          _focusedElementIndex = middleIndex;
         });
-        widget.onChanged?.call(_focusedElement);
+        widget.onChanged?.call(_focusedElementIndex);
       }
     }
     return true;
