@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:stare/data/properties.dart';
 
-import '../data/style.dart';
-import '../widgets/actions_listview.dart';
-import '../widgets/utils.dart';
+import '../../data/style.dart';
+import '../../widgets/actions_listview.dart';
+import '../../widgets/utils.dart';
 
-class ExercisePage extends StatelessWidget {
-  const ExercisePage({Key? key}) : super(key: key);
+class PerformPage extends StatelessWidget {
+  const PerformPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +19,15 @@ class ExercisePage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
           child: Text(
-            "Exercises",
+            "Perform",
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
         const ColumnGap(),
-        SizedBox(
-          height: 304,
-          child: Align(
-            alignment: Alignment.center,
-            child: ActionsListView(
-              width: MediaQuery.of(context).size.width,
-              items: exerciseOptions,
-            ),
-          ),
-        ),
+        // SizedBox(
+        //   height: 304,
+        //   child: ActionsListView(width: MediaQuery.of(context).size.width),
+        // ),
         const ColumnGap(),
         const Align(
           alignment: Alignment.center,
