@@ -34,9 +34,15 @@ class SmallRowGap extends StatelessWidget {
 }
 
 class NavBar extends StatelessWidget {
-  final Widget child;
+  final Widget? child;
+  final List<Widget>? children;
 
-  const NavBar({Key? key, required this.child}) : super(key: key);
+  const NavBar({Key? key, this.child, this.children})
+      : assert(
+          !(child == null && children == null),
+          "child and children both cannot be null",
+        ),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +52,11 @@ class NavBar extends StatelessWidget {
         left: defaultPadding,
       ),
       child: Row(
-        children: <Widget>[
-          child,
-          const Spacer(),
-        ],
+        children: children ??
+            <Widget>[
+              child!,
+              const Spacer(),
+            ],
       ),
     );
   }
