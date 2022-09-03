@@ -14,6 +14,32 @@ const List<String> exerciseOptions = [
   "Before-Bed",
   "Morning",
 ];
+const Map<String, List<Map<String, String>>> exerciseSubOptions = {
+  "Eye": [
+    {
+      "title": "Rapid Eye Movement",
+      "duration": "2 min",
+      "description":
+          "Rapid eye movements to break the stale nature of your eyes. Facilitates your eye muscles.",
+    },
+    {
+      "title": "Blink",
+      "duration": "1 min",
+      "description":
+          "Blinking lubricates and cleans your eyes by spreading your tears over its outer surface.",
+    },
+    {
+      "title": "Warm Compress",
+      "duration": "5 min",
+      "description":
+          " A warm compress is an easy way to increase blood flow to sore areas of your body. This increased blood flow can reduce pain.",
+    },
+  ],
+  "Posture": [],
+  "Breathing": [],
+  "Before-Bed": [],
+  "Morning": [],
+};
 const List<String> performOptions = [
   "Mindfulness",
   "Relax",
@@ -21,17 +47,18 @@ const List<String> performOptions = [
   "Sleep",
 ];
 const List<String> months = [
-  'JAN',
-  'FEB',
-  'MAR',
-  'APR',
-  'JUN',
-  'JUL',
-  'AUG',
-  'SEP',
-  'OCT',
-  'NOV',
-  'DEC'
+  'JANUARY',
+  'FEBRUARY',
+  'MARCH',
+  'APRIL',
+  'MAY',
+  'JUNE',
+  'JULY',
+  'AUGUST',
+  'SEPTEMBER',
+  'OCTOBER',
+  'NOVEMBER',
+  'DECEMBER'
 ];
 const Map<int, List<bool>> ledNumberDisplay = {
   0: [true, true, true, false, true, true, true],
