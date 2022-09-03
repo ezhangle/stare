@@ -42,4 +42,4 @@ final TextStyle body = baseTextStyle.copyWith(
 const double defaultPadding = 16.0;
 
 // * animation
-const Duration defaultTransitionDuration = Duration(milliseconds: 200);
+const Duration defaultTransitionDuration = Duration(milliseconds: 400);
