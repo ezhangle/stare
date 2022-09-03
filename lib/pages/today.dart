@@ -41,7 +41,7 @@ class TodayPage extends StatelessWidget {
               ),
             ],
           ),
-          Panel(
+          const Panel(
             children: <Widget>[
               _CalendarView(),
             ],
@@ -88,8 +88,6 @@ class _CalendarViewState extends State<_CalendarView> {
     firstWeekday = thisMonthsFirstDate.weekday;
     totalDaysInMonth =
         nextMonthsFirstDate.difference(thisMonthsFirstDate).inDays;
-
-    debugPrint("First Weekday $firstWeekday\nTotal Days $totalDaysInMonth");
   }
 
   @override
@@ -116,6 +114,7 @@ class _CalendarViewState extends State<_CalendarView> {
               return ListPicker(
                 itemCount: months.length,
                 width: constraints.maxWidth,
+                defaultIndex: 8,
                 itemBuilder: (index, focusedElementIndex) {
                   final bool focused = index == focusedElementIndex;
                   return Align(
@@ -127,13 +126,20 @@ class _CalendarViewState extends State<_CalendarView> {
                           ? Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 color:
                                     Theme.of(context).colorScheme.onBackground,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w200,
                               )
                           : Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                color: Theme.of(context).colorScheme.tertiary,
+                                fontWeight: FontWeight.w200,
+                                color: Theme.of(context).colorScheme.background,
                               ),
                     ),
                   );
+                },
+                onChanged: (index) {
+                  setState(() {
+                    month = index + 1;
+                    _init();
+                  });
                 },
               );
             },
@@ -143,14 +149,14 @@ class _CalendarViewState extends State<_CalendarView> {
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <DateLabel>[
-            DateLabel("M"),
-            DateLabel("T"),
-            DateLabel("W"),
-            DateLabel("T"),
-            DateLabel("F"),
-            DateLabel("S"),
-            DateLabel("S"),
+          children: const <_WeekDayLabel>[
+            _WeekDayLabel("M"),
+            _WeekDayLabel("T"),
+            _WeekDayLabel("W"),
+            _WeekDayLabel("T"),
+            _WeekDayLabel("F"),
+            _WeekDayLabel("S"),
+            _WeekDayLabel("S"),
           ],
         ),
         const SmallColumnGap(),
@@ -176,10 +182,10 @@ class _CalendarViewState extends State<_CalendarView> {
 class _DatesView extends StatelessWidget {
   final int year;
   final int month;
-  final int firstWeekday;
-  final int totalDaysInMonth;
   final int today;
   final int selectedDate;
+  final int firstWeekday;
+  final int totalDaysInMonth;
   final Function(int)? onTap;
 
   const _DatesView({
@@ -195,21 +201,28 @@ class _DatesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final double height = totalDaysInMonth > 30
+    //     ? firstWeekday < 6 // saturday
+    //         ? 120
+    //         : 144
+    //     : firstWeekday == 7
+    //         ? 144
+    //         : 120;
     int dayCounter = 0;
     return SizedBox(
       width: 280, // 40 * 7
-      height: 120, // 24 * 5
+      height: 144, // 24 * 6
       child: Wrap(
-        children: List<DateLabel>.generate(
-          35,
+        children: List<_DateLabel>.generate(
+          42,
           (index) {
             if (index < firstWeekday - 1 ||
                 index >= (totalDaysInMonth + firstWeekday - 1)) {
-              return const DateLabel("");
+              return const _DateLabel("");
             } else {
               dayCounter += 1;
               final thisDay = dayCounter;
-              return DateLabel(
+              return _DateLabel(
                 dayCounter.toString(),
                 glow: dayCounter == today,
                 bold: dayCounter == today || dayCounter == selectedDate,
@@ -226,14 +239,14 @@ class _DatesView extends StatelessWidget {
   }
 }
 
-class DateLabel extends StatelessWidget {
-  final String label;
+class _DateLabel extends StatelessWidget {
+  final String text;
   final bool glow;
   final bool bold;
   final Function()? onTap;
 
-  const DateLabel(
-    this.label, {
+  const _DateLabel(
+    this.text, {
     Key? key,
     this.onTap,
     this.glow = false,
@@ -248,7 +261,7 @@ class DateLabel extends StatelessWidget {
           height: 24, // fontSize(12) * lineHeight(1.5) + spacing(6)
           alignment: Alignment.center,
           child: Text(
-            label,
+            text,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: bold
                       ? Theme.of(context).colorScheme.onBackground
@@ -268,4 +281,25 @@ class DateLabel extends StatelessWidget {
           ),
         ),
       );
+}
+
+class _WeekDayLabel extends StatelessWidget {
+  final String text;
+
+  const _WeekDayLabel(this.text, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 40,
+      height: 24, // fontSize(12) * lineHeight(1.5) + spacing(6)
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+      ),
+    );
+  }
 }
