@@ -4,11 +4,12 @@ import 'package:flutter/rendering.dart';
 class ListPicker extends StatefulWidget {
   final double width;
   final double? height;
-  final double? itemExtent;
   final int itemCount;
-  final Widget Function(int index, int focusedElementIndex) itemBuilder;
   final int? defaultIndex;
-  final Function(int)? onChanged;
+  final double? itemExtent;
+  final void Function(int index)? onChanged;
+  final Widget Function(int index, int focusedElementIndex) itemBuilder;
+  final ScrollPhysics? scrollPhysics;
 
   const ListPicker({
     Key? key,
@@ -19,13 +20,14 @@ class ListPicker extends StatefulWidget {
     this.itemExtent,
     this.defaultIndex,
     this.onChanged,
+    this.scrollPhysics,
   }) : super(key: key);
 
   @override
-  State<ListPicker> createState() => _ListPickerState();
+  State<ListPicker> createState() => ListPickerState();
 }
 
-class _ListPickerState extends State<ListPicker> {
+class ListPickerState extends State<ListPicker> {
   late final double _itemExtent;
   late final ScrollController _scrollController;
   late final double _defaultExtent;
@@ -39,7 +41,7 @@ class _ListPickerState extends State<ListPicker> {
     _itemExtent = widget.itemExtent ?? widget.width / 3;
     _focusedElementIndex = widget.defaultIndex ?? 0;
     _scrollController = ScrollController(
-      initialScrollOffset: (_itemExtent * 1.55 - (widget.width / 2)) +
+      initialScrollOffset: (_itemExtent * 1.5 - (widget.width / 2)) +
           (_itemExtent * _focusedElementIndex),
     );
     _defaultExtent = (_itemExtent * 1.5) - (widget.width / 2);
@@ -57,7 +59,7 @@ class _ListPickerState extends State<ListPicker> {
           itemCount: widget.itemCount,
           controller: _scrollController,
           scrollDirection: Axis.horizontal,
-          physics: const ClampingScrollPhysics(),
+          physics: widget.scrollPhysics,
           padding: EdgeInsets.symmetric(horizontal: _itemExtent),
           itemBuilder: (context, index) =>
               widget.itemBuilder(index, _focusedElementIndex),
@@ -72,7 +74,7 @@ class _ListPickerState extends State<ListPicker> {
         _scrollController.position.activity is! HoldScrollActivity;
   }
 
-  _animateTo(int index, {int durationMillis = 200}) {
+  animateTo(int index, {int durationMillis = 200}) {
     final double targetExtent = _defaultExtent + _itemExtent * index;
 
     _scrollController.animateTo(
@@ -83,14 +85,15 @@ class _ListPickerState extends State<ListPicker> {
   }
 
   int _offsetToMiddleIndex(double offset) =>
-      (offset + widget.width / 2) ~/ _itemExtent;
+      ((offset + widget.width / 2) ~/ _itemExtent) - 1;
 
   bool _onNotification(Notification notification) {
     if (notification is ScrollNotification) {
-      final middleIndex = _offsetToMiddleIndex(notification.metrics.pixels) - 1;
+      final int middleIndex = _offsetToMiddleIndex(notification.metrics.pixels)
+          .clamp(0, widget.itemCount - 1);
 
       if (_userStoppedScrolling(notification)) {
-        _animateTo(middleIndex);
+        animateTo(middleIndex);
       }
 
       if (middleIndex != _focusedElementIndex) {
