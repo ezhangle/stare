@@ -6,28 +6,13 @@ import '../data/style.dart';
 const _animationDuration = Duration(milliseconds: 600);
 
 class ActionsListView extends StatefulWidget {
-  final double width;
-  final double? height;
-  final double? itemExtent;
   final List<String> items;
-  final int? defaultIndex;
-  final double swipeThreshold;
   final Function(int)? onChanged;
-
-  final TextStyle? selectedTextStyle;
-  final TextStyle? defaultTextStyle;
 
   const ActionsListView({
     Key? key,
-    this.height,
-    required this.width,
-    required this.items,
-    this.itemExtent,
-    this.defaultIndex,
     this.onChanged,
-    this.selectedTextStyle,
-    this.defaultTextStyle,
-    this.swipeThreshold = 100,
+    required this.items,
   }) : super(key: key);
 
   @override
@@ -35,128 +20,64 @@ class ActionsListView extends StatefulWidget {
 }
 
 class _ListPickerState extends State<ActionsListView> {
-  final double _itemExtent = 272;
-
-  late final double _defaultExtent;
-  late final ScrollController _scrollController;
-
-  late int _focusedElement;
-  double _startDx = 0;
-  double _endDx = 0;
+  late final PageController _pageController;
+  double _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
 
-    _focusedElement = widget.defaultIndex ?? 0;
-    _scrollController = ScrollController(
-      initialScrollOffset: (_itemExtent * 1.55 - (widget.width / 2)) +
-          (_itemExtent * _focusedElement),
-    );
-    _defaultExtent = (_itemExtent * 1.5) - (widget.width / 2);
+    _pageController = PageController(
+      viewportFraction: 0.7,
+    )..addListener(
+        () => setState(
+          () => _currentIndex = _pageController.page ?? 0,
+        ),
+      );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() => _focusedElement == widget.items.length - 1
-            ? _focusedElement = 0
-            : _focusedElement = _focusedElement + 1);
-
-        _animateTo(_focusedElement);
+    return PageView.builder(
+      clipBehavior: Clip.none,
+      controller: _pageController,
+      itemCount: widget.items.length,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (context, index) {
+        final double percentage = (index - _currentIndex).clamp(-1, 1);
+        return Container(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()..rotateZ(0.2 * percentage),
+          transformAlignment: Alignment.bottomCenter,
+          child: _ActionCard(label: widget.items[index]),
+        );
       },
-      onHorizontalDragStart: (details) => _startDx = details.localPosition.dx,
-      onHorizontalDragUpdate: (details) => _endDx = details.localPosition.dx,
-      onHorizontalDragEnd: (details) {
-        final double distance = _startDx - _endDx;
-
-        if (distance.abs() >= widget.swipeThreshold) {
-          if (distance < 0 && _focusedElement != 0) {
-            // swiped in right direction
-            setState(() => _focusedElement -= 1);
-          } else if (_focusedElement != widget.items.length - 1) {
-            //&& distance > 0
-            // swiped in left direction
-            setState(() => _focusedElement += 1);
-          }
-          _animateTo(_focusedElement);
-        }
-      },
-      child: SizedBox(
-        height: widget.height,
-        width: widget.width,
-        child: ListView.builder(
-            clipBehavior: Clip.none,
-            itemExtent: _itemExtent,
-            controller: _scrollController,
-            itemCount: widget.items.length,
-            scrollDirection: Axis.horizontal,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: _itemExtent),
-            itemBuilder: (_, index) {
-              return _ActionCard(
-                label: widget.items[index],
-                index: index,
-                focusedElement: _focusedElement,
-              );
-            }),
-      ),
-    );
-  }
-
-  _animateTo(int index) {
-    final double targetExtent = _defaultExtent + _itemExtent * index;
-
-    _scrollController.animateTo(
-      targetExtent,
-      duration: _animationDuration,
-      curve: Curves.easeOutBack,
     );
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 }
 
 class _ActionCard extends StatelessWidget {
-  final int index;
-  final int focusedElement;
   final String label;
   final double width;
 
   const _ActionCard({
     Key? key,
     required this.label,
-    required this.index,
-    required this.focusedElement,
     this.width = 240,
   }) : super(key: key);
 
-  double _rotation() {
-    if (index < focusedElement) {
-      return -0.20;
-    } else if (index == focusedElement) {
-      return 0;
-    } else {
-      return 0.20;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: _animationDuration,
-      curve: Curves.easeOutBack,
+    return Container(
       width: width,
       height: width * 1.25,
       margin: const EdgeInsets.symmetric(horizontal: defaultPadding),
-      transform: Matrix4.identity()
-        ..rotateZ(_rotation())
-        ..translate(0.0, index == focusedElement ? 0.0 : 32.0),
       transformAlignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -173,7 +94,7 @@ class _ActionCard extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 0,
+            bottom: -defaultPadding,
             right: 0,
             child: SizedBox(
               height: 240,
