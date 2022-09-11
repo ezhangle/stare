@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:stare/data/style.dart';
 
 class PushButton extends StatefulWidget {
   final double size;
+  final Function()? onTap;
 
   const PushButton({
     Key? key,
+    this.onTap,
     this.size = 56,
   }) : super(key: key);
 
@@ -50,7 +53,7 @@ class _PushButtonState extends State<PushButton> {
           ),
         ),
         AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: 50),
           width: widget.size - 16,
           height: widget.size - 16,
           decoration: const BoxDecoration(
@@ -72,12 +75,18 @@ class _PushButtonState extends State<PushButton> {
           ),
         ),
         GestureDetector(
-          onTapDown: (details) => setState(() => _pressed = true),
-          onTapUp: (details) => setState(() => _pressed = false),
+          onTapDown: (details) {
+            setState(() => _pressed = true);
+            widget.onTap?.call();
+          },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
+            curve: Curves.decelerate,
             height: widget.size - 10,
             width: widget.size - 10,
+            onEnd: () {
+              _pressed == true ? setState(() => _pressed = false) : null;
+            },
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
