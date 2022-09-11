@@ -1,200 +1,238 @@
 import 'package:flutter/material.dart';
-import 'package:stare/data/style.dart';
-import 'package:stare/widgets/utils.dart';
-import 'package:vector_math/vector_math.dart' show radians;
 
-class ShelfPage extends StatelessWidget {
+import '../data/style.dart';
+import '../widgets/utils.dart';
+import '../models/journal.dart';
+import '../widgets/journal_view.dart';
+
+final List<Journal> journals = [
+  Journal(
+    title: "Damien's Journal",
+    year: "2022",
+    entries: <JournalEntry>[
+      for (int index = 1; index < 7; index++)
+        JournalEntry(
+          entryNumber: index,
+          date: index + 10,
+          month: "Aug",
+          mood: "null",
+          content:
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus fuga facilis atque repellat itaque officiis id quasi dolore cum aperiam!\n\nVeniam architecto laudantium dignissimos mollitia quas repellat aspernatur pariatur rerum!\n\nLorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus fuga facilis atque repellat itaque officiis id quasi dolore cum aperiam!",
+        ),
+    ],
+  ),
+  Journal(
+    title: "John's Journal",
+    year: "2019",
+    entries: <JournalEntry>[
+      for (int index = 1; index < 4; index++)
+        JournalEntry(
+          entryNumber: index,
+          date: index + 4,
+          month: "Oct",
+          mood: "null",
+          content:
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus fuga facilis atque repellat itaque officiis id quasi dolore cum aperiam!\n\nVeniam architecto laudantium dignissimos mollitia quas repellat aspernatur pariatur rerum!\n\nLorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus fuga facilis atque repellat itaque officiis id quasi dolore cum aperiam!",
+        ),
+    ],
+  ),
+  Journal(
+    title: "Milo's Journal",
+    entries: <JournalEntry>[
+      for (int index = 1; index < 20; index++)
+        JournalEntry(
+          entryNumber: index,
+          date: index,
+          month: "Feb",
+          mood: "null",
+          content:
+              "Lorem ipsum dolor sit amet consectetur adipisicing elit.\n\nNecessitatibus fuga facilis atque repellat itaque officiis id quasi dolore cum aperiam!\n\nVeniam architecto laudantium dignissimos mollitia quas repellat aspernatur pariatur rerum!\n\nLorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus fuga facilis atque repellat itaque officiis id quasi dolore cum aperiam!",
+        ),
+    ],
+  ),
+];
+
+class ShelfPage extends StatefulWidget {
   const ShelfPage({Key? key}) : super(key: key);
 
   @override
+  State<ShelfPage> createState() => _ShelfPageState();
+}
+
+class _ShelfPageState extends State<ShelfPage> {
+  int _focusedJournalIndex = 0;
+  bool _reading = false;
+
+  @override
   Widget build(BuildContext context) {
+    final List<JournalEntry> focusedJournalEntries =
+        journals[_focusedJournalIndex].entries;
+
     return Column(
-      children: const <Widget>[
-        NavBar(child: NavWheel()),
-        Spacer(),
-        JournalPagesView(),
-        Spacer(),
-        // Text("Last Updated 17 Aug ● Total Entries 18"),
-        // Spacer(),
+      children: <Widget>[
+        const NavBar(child: NavWheel()),
+        const Spacer(),
+        SizedBox(
+          height: 460,
+          child: PageView.builder(
+            clipBehavior: Clip.none,
+            itemCount: journals.length,
+            physics: _reading
+                ? const NeverScrollableScrollPhysics()
+                : const BouncingScrollPhysics(),
+            onPageChanged: (int index) => setState(
+              () => _focusedJournalIndex = index,
+            ),
+            itemBuilder: (context, index) {
+              return Align(
+                alignment: Alignment.center,
+                child: AnimatedScale(
+                  duration: defaultTransitionDuration,
+                  curve: Curves.easeOutExpo,
+                  scale: _reading ? 1 : 0.75,
+                  child: _reading
+                      ? SizedBox(
+                          width: 299, // 460 * 0.65
+                          child: JournalView(
+                            // key: GlobalKey<JournalViewState>()
+                            //   ..currentState?.animateTo(2),
+                            initalPage: 2,
+
+                            coverBackSide: _Cover.backSide(context),
+                            pageBackSide: _Page.blank(context),
+                            children: <Widget>[
+                              _Cover(
+                                title: journals[index].title,
+                                year: journals[index].year,
+                              ),
+                              _Page.blank(context),
+                              for (final JournalEntry entry
+                                  in focusedJournalEntries)
+                                _Page(entry),
+                            ],
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () async {
+                            setState(
+                              () => _reading = true,
+                            );
+                            await Future.delayed(Duration(milliseconds: 40));
+                          },
+                          child: _Cover(
+                            // height: 345.0, // 460 * 0.75
+                            title: journals[index].title,
+                            year: journals[index].year,
+                          ),
+                        ),
+                ),
+              );
+            },
+          ),
+        ),
+        const Spacer(),
+        Text(
+          "Last Updated ${focusedJournalEntries.last.date} ${focusedJournalEntries.last.month} "
+          "● Total Entries ${focusedJournalEntries.length}",
+        ),
+        const Spacer(),
       ],
     );
   }
 }
 
-class JournalCoverPage extends StatelessWidget {
+class _Cover extends StatelessWidget {
   final String title;
   final String? year;
 
-  const JournalCoverPage({
+  final double height;
+
+  const _Cover({
     Key? key,
     required this.title,
     this.year,
+    this.height = 460,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     return Container(
-      height: 328,
-      width: 212,
+      width: height * 0.65,
+      height: height,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          stops: const <double>[0, 0.2],
+          stops: const <double>[0, 0.15],
           colors: [
-            colorScheme.tertiary,
-            colorScheme.primary,
+            Theme.of(context).colorScheme.tertiary,
+            Theme.of(context).colorScheme.primary,
           ],
         ),
         borderRadius: const BorderRadius.horizontal(
           right: Radius.circular(defaultPadding),
-          left: Radius.circular(defaultPadding / 4),
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
             offset: const Offset(defaultPadding / 2, defaultPadding / 2),
-            color: colorScheme.tertiary,
+            color: Theme.of(context).colorScheme.tertiary,
             blurRadius: defaultPadding * 2,
           ),
         ],
       ),
-      child: year == null
-          ? _getTitle(colorScheme)
-          : Stack(
-              fit: StackFit.expand,
-              children: [
-                Positioned(
-                  top: -defaultPadding / 2,
-                  right: defaultPadding,
-                  child: RotatedBox(
-                    quarterTurns: 1,
-                    child: Text(
-                      year.toString(),
-                      style: TextStyle(
-                        fontSize: 64,
-                        fontWeight: FontWeight.w800,
-                        color: colorScheme.secondary,
-                      ),
-                    ),
+      // alignment: Alignment.bottomRight,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (year != null)
+            Positioned(
+              top: -defaultPadding / 2,
+              right: defaultPadding,
+              child: RotatedBox(
+                quarterTurns: 1,
+                child: Text(
+                  year!,
+                  style: TextStyle(
+                    fontSize: height / 5,
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                _getTitle(colorScheme),
-              ],
+              ),
             ),
-    );
-  }
-
-  Widget _getTitle(ColorScheme colorScheme) => Positioned(
-        right: defaultPadding * 2,
-        bottom: defaultPadding * 2,
-        child: Text(
-          "Damien's\nJournal",
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onPrimary,
-          ),
-        ),
-      );
-}
-
-class JournalPagesView extends StatelessWidget {
-  const JournalPagesView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return Stack(
-      alignment: Alignment.centerLeft,
-      clipBehavior: Clip.none,
-      children: <Widget>[
-        // ? front cover
-        Positioned(
-          left: -296,
-          child: Transform(
-            alignment: Alignment.centerRight,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(radians(-30)),
-            child: _JournalCover(roundedCorner: false),
-          ),
-        ),
-        // ? back cover
-        _JournalCover(),
-        // ? page
-        _JournalPage(),
-        // _FlipViewBuilder(
-        //   frontSide: Container(
-        //     height: 220,
-        //     width: 220,
-        //     color: Colors.purple,
-        //   ),
-        //   backSide: Container(
-        //     height: 220,
-        //     width: 220,
-        //     color: Colors.yellow,
-        //   ),
-        // ),
-      ],
-    );
-  }
-}
-
-class _FlipViewBuilder extends StatefulWidget {
-  final Widget frontSide;
-  final Widget backSide;
-
-  const _FlipViewBuilder(
-      {Key? key, required this.frontSide, required this.backSide})
-      : super(key: key);
-
-  @override
-  State<_FlipViewBuilder> createState() => _FlipViewBuilderState();
-}
-
-class _FlipViewBuilderState extends State<_FlipViewBuilder> {
-  final double width = 220;
-  bool flipped = false;
-  double pos = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    print(pos * 180);
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        setState(
-          () => pos = 1 - (details.localPosition.dx / width),
-        );
-      },
-      child: Transform(
-        alignment: Alignment.centerLeft,
-        transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.001)
-          ..rotateY(radians(180 * pos)),
-        child: flipped ? widget.backSide : widget.frontSide,
+          _getTitle(Theme.of(context).colorScheme.onPrimary),
+        ],
       ),
     );
   }
-}
 
-class _JournalCover extends StatelessWidget {
-  final bool roundedCorner;
+  Widget _getTitle(Color textColor) => Positioned(
+        right: defaultPadding * 2,
+        bottom: defaultPadding * 2,
+        child: SizedBox(
+          width: height * 0.45,
+          child: Text(
+            title,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontSize: height / 15,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+        ),
+      );
 
-  const _JournalCover({Key? key, this.roundedCorner = true}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  static Widget backSide(
+    BuildContext context, {
+    double height = 460,
+  }) {
     return Container(
-      width: 296,
-      height: 460,
+      width: height * 0.65,
+      height: height,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
-        borderRadius: roundedCorner
-            ? const BorderRadius.horizontal(
-                right: Radius.circular(defaultPadding),
-              )
-            : BorderRadius.zero,
+        borderRadius: const BorderRadius.horizontal(
+          right: Radius.circular(defaultPadding),
+        ),
         boxShadow: <BoxShadow>[
           BoxShadow(
             offset: const Offset(defaultPadding / 2, defaultPadding / 2),
@@ -207,24 +245,33 @@ class _JournalCover extends StatelessWidget {
   }
 }
 
-class _JournalPage extends StatelessWidget {
-  const _JournalPage({
-    Key? key,
-  }) : super(key: key);
+class _Page extends StatelessWidget {
+  final double width;
+  final double height;
+
+  final JournalEntry entry;
+
+  const _Page(
+    this.entry, {
+    this.width = 288,
+    this.height = 444,
+  });
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      width: 288, // width(296) - padding(8)
-      height: 444, // height(460) - padding(16)
+      width: width,
+      height: height,
       padding: const EdgeInsets.symmetric(
         horizontal: defaultPadding * 2,
         vertical: defaultPadding * 2,
       ),
       decoration: BoxDecoration(
+        color: colorScheme.onPrimary,
         gradient: LinearGradient(
+          stops: const <double>[0, 0.075],
           colors: [
             colorScheme.surface,
             colorScheme.onPrimary,
@@ -243,7 +290,7 @@ class _JournalPage extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  border: Border.all(color: colorScheme.primary),
+                  border: Border.all(color: colorScheme.tertiary),
                   borderRadius: BorderRadius.circular(defaultPadding / 2),
                 ),
                 child: Column(
@@ -251,11 +298,11 @@ class _JournalPage extends StatelessWidget {
                   children: <Widget>[
                     // SizedBox(height: 2),
                     Text(
-                      "Aug",
+                      entry.month,
                       style: textTheme.bodySmall?.copyWith(height: 1.25),
                     ),
                     Text(
-                      "7",
+                      entry.date.toString(),
                       style: textTheme.bodyLarge,
                     ),
                   ],
@@ -269,7 +316,7 @@ class _JournalPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      "Entry no. 27",
+                      "Entry no. ${entry.entryNumber}",
                       style: textTheme.bodySmall?.copyWith(height: 1.25),
                     ),
                     const Placeholder(
@@ -284,10 +331,34 @@ class _JournalPage extends StatelessWidget {
           ),
           const ColumnGap(),
           Text(
-            "Today was chest exercise day so I did  the PULL workout today and then when I checked on the humus in the fridge it got spoiled and I had to throw all of it  away!\n\nSo I decided I will use fresh instead for  today onwards",
+            entry.content,
             style: textTheme.bodySmall,
           ),
         ],
+      ),
+    );
+  }
+
+  static Widget blank(
+    BuildContext context, {
+    double width = 288,
+    double height = 444,
+  }) {
+    return Container(
+      width: 288,
+      height: 444,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          stops: const <double>[0, 0.06],
+          colors: [
+            Theme.of(context).colorScheme.surface,
+            Theme.of(context).colorScheme.onPrimary,
+          ],
+        ),
+        borderRadius: const BorderRadius.horizontal(
+          right: Radius.circular(defaultPadding),
+          left: Radius.circular(defaultPadding / 4),
+        ),
       ),
     );
   }
