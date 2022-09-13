@@ -11,7 +11,7 @@ class DoubleLEDNumberDisplay extends StatelessWidget {
   const DoubleLEDNumberDisplay({
     Key? key,
     required this.value,
-    this.segmentWidth = defaultPadding,
+    this.segmentWidth = 16.0,
     this.showZeroInTenthsPlace = false,
   }) : super(key: key);
 
@@ -48,9 +48,11 @@ class SingleLEDNumberDisplay extends StatelessWidget {
   final int value;
   final double segmentWidth;
 
-  const SingleLEDNumberDisplay(
-      {Key? key, this.value = 10, this.segmentWidth = defaultPadding})
-      : super(key: key);
+  const SingleLEDNumberDisplay({
+    Key? key,
+    this.value = 10,
+    this.segmentWidth = 16.0,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -108,14 +110,16 @@ class _HorizontalSegment extends StatelessWidget {
   final bool glow;
   final double width;
 
-  const _HorizontalSegment(
-      {Key? key, this.glow = false, this.width = defaultPadding})
-      : super(key: key);
+  const _HorizontalSegment({
+    Key? key,
+    this.glow = false,
+    required this.width,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: defaultTransitionDuration,
+      duration: shortTransitionDuration,
       width: width,
       height: width / 4,
       decoration: BoxDecoration(
@@ -140,14 +144,16 @@ class _VerticalSegment extends StatelessWidget {
   final bool glow;
   final double width;
 
-  const _VerticalSegment(
-      {Key? key, this.glow = false, this.width = defaultPadding})
-      : super(key: key);
+  const _VerticalSegment({
+    Key? key,
+    this.glow = false,
+    required this.width,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: defaultTransitionDuration,
+      duration: shortTransitionDuration,
       width: width / 4,
       height: width,
       decoration: BoxDecoration(

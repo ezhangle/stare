@@ -6,12 +6,16 @@ import '../data/style.dart';
 import 'tilted_pushbutton.dart';
 import 'led_number_display.dart';
 
+// TODO add am/pm selector
+
 class DigitalClock extends StatefulWidget {
   final int hour;
   final int minute;
+  final double width; // TODO better relative sizing
 
   const DigitalClock({
     Key? key,
+    this.width = 256,
     required this.hour,
     required this.minute,
   }) : super(key: key);
@@ -21,23 +25,55 @@ class DigitalClock extends StatefulWidget {
 }
 
 class _DigitalClockState extends State<DigitalClock> {
-  late int hour;
-  late int minute;
+  late int _hour;
+  late int _minute;
+
+  bool _keepIncreasing = false;
+  bool _keepDecreasing = false;
 
   @override
   void initState() {
     super.initState();
     // init hour and minute
-    hour = widget.hour;
-    minute = widget.minute;
+    _hour = widget.hour;
+    _minute = widget.minute;
+  }
+
+  void _increaseMinuteExponentially() async {
+    while (_keepIncreasing && _minute != 59) {
+      setState(() => _minute++);
+      await Future.delayed(shortTransitionDuration);
+    }
+  }
+
+  void _decreaseMinuteExponentially() async {
+    while (_keepDecreasing && _minute != 0) {
+      setState(() => _minute--);
+      await Future.delayed(shortTransitionDuration);
+    }
+  }
+
+  void _increaseHourExponentially() async {
+    while (_keepIncreasing && _hour != 23) {
+      setState(() => _hour++);
+      await Future.delayed(shortTransitionDuration);
+    }
+  }
+
+  void _decreaseHourExponentially() async {
+    while (_keepDecreasing && _hour != 0) {
+      setState(() => _hour--);
+      await Future.delayed(shortTransitionDuration);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     const Color clockColor = Color(0xffa8a8a8);
+    final double buttonWidth = widget.width * 0.1;
     return SizedBox(
-      width: 256,
+      width: widget.width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -58,35 +94,63 @@ class _DigitalClockState extends State<DigitalClock> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       TiltedPushButton(
+                        width: buttonWidth,
                         iconName: "plus-icon",
                         onTapDown: () {
-                          if (hour == 24) return;
-                          setState(() => hour += 1);
+                          if (_hour != 23) {
+                            setState(() => _hour += 1);
+                          }
                         },
+                        onLongPressStart: () {
+                          _keepIncreasing = true;
+                          _increaseHourExponentially();
+                        },
+                        onLongPressEnd: () => _keepIncreasing = false,
                       ),
                       const SizedBox(width: defaultPadding / 2),
                       TiltedPushButton(
+                        width: buttonWidth,
                         iconName: "minus-icon",
                         onTapDown: () {
-                          if (hour == 1) return;
-                          setState(() => hour -= 1);
+                          if (_hour != 0) {
+                            setState(() => _hour -= 1);
+                          }
                         },
+                        onLongPressStart: () {
+                          _keepDecreasing = true;
+                          _decreaseHourExponentially();
+                        },
+                        onLongPressEnd: () => _keepDecreasing = false,
                       ),
                       const SmallRowGap(),
                       TiltedPushButton(
+                        width: buttonWidth,
                         iconName: "plus-icon",
                         onTapDown: () {
-                          if (minute == 59) return;
-                          setState(() => minute += 1);
+                          if (_minute != 59) {
+                            setState(() => _minute += 1);
+                          }
                         },
+                        onLongPressStart: () {
+                          _keepIncreasing = true;
+                          _increaseMinuteExponentially();
+                        },
+                        onLongPressEnd: () => _keepIncreasing = false,
                       ),
                       const SizedBox(width: defaultPadding / 2),
                       TiltedPushButton(
+                        width: buttonWidth,
                         iconName: "minus-icon",
                         onTapDown: () {
-                          if (minute == 0) return;
-                          setState(() => minute -= 1);
+                          if (_minute != 0) {
+                            setState(() => _minute -= 1);
+                          }
                         },
+                        onLongPressStart: () {
+                          _keepDecreasing = true;
+                          _decreaseMinuteExponentially();
+                        },
+                        onLongPressEnd: () => _keepDecreasing = false,
                       ),
                     ],
                   ),
@@ -95,7 +159,7 @@ class _DigitalClockState extends State<DigitalClock> {
             ),
           ),
           Container(
-            height: 128,
+            height: widget.width * 0.5,
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(defaultPadding),
@@ -108,10 +172,10 @@ class _DigitalClockState extends State<DigitalClock> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                DoubleLEDNumberDisplay(value: hour),
+                DoubleLEDNumberDisplay(value: _hour),
                 const _ClockSeperator(),
                 DoubleLEDNumberDisplay(
-                  value: minute,
+                  value: _minute,
                   showZeroInTenthsPlace: true,
                 ),
               ],
@@ -121,11 +185,6 @@ class _DigitalClockState extends State<DigitalClock> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
 
 class _ClockSeperator extends StatelessWidget {
@@ -133,7 +192,7 @@ class _ClockSeperator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double size = defaultPadding / 3;
+    const double size = defaultPadding / 4;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: defaultPadding),
@@ -141,34 +200,25 @@ class _ClockSeperator extends StatelessWidget {
       width: size,
       child: Column(
         children: [
-          Container(
-            height: size,
-            width: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.primary,
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  blurRadius: defaultPadding / 4,
-                ),
-              ],
-            ),
-          ),
+          _dot(size, context),
           const SmallColumnGap(),
-          Container(
-            height: size,
-            width: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.primary,
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  blurRadius: defaultPadding / 4,
-                ),
-              ],
-            ),
+          _dot(size, context),
+        ],
+      ),
+    );
+  }
+
+  Widget _dot(double size, BuildContext context) {
+    return Container(
+      height: size,
+      width: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Theme.of(context).colorScheme.primary,
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Theme.of(context).colorScheme.tertiary,
+            blurRadius: defaultPadding / 4,
           ),
         ],
       ),
