@@ -3,8 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../data/style.dart';
 
-const _animationDuration = Duration(milliseconds: 600);
-
 class ActionsListView extends StatefulWidget {
   final List<String> items;
   final Function(int)? onChanged;
@@ -28,7 +26,7 @@ class _ListPickerState extends State<ActionsListView> {
     super.initState();
 
     _pageController = PageController(
-      viewportFraction: 0.7,
+      viewportFraction: 0.65,
     )..addListener(
         () => setState(
           () => _currentIndex = _pageController.page ?? 0,
@@ -40,6 +38,7 @@ class _ListPickerState extends State<ActionsListView> {
   Widget build(BuildContext context) {
     return PageView.builder(
       clipBehavior: Clip.none,
+      onPageChanged: (int index) => widget.onChanged?.call(index),
       controller: _pageController,
       itemCount: widget.items.length,
       physics: const BouncingScrollPhysics(),
@@ -47,7 +46,9 @@ class _ListPickerState extends State<ActionsListView> {
         final double percentage = (index - _currentIndex).clamp(-1, 1);
         return Container(
           alignment: Alignment.center,
-          transform: Matrix4.identity()..rotateZ(0.2 * percentage),
+          transform: Matrix4.identity()
+            ..rotateZ(0.2 * percentage)
+            ..scale(0.85 + (0.15 * (1 - percentage.abs()))),
           transformAlignment: Alignment.bottomCenter,
           child: _ActionCard(label: widget.items[index]),
         );
@@ -77,7 +78,6 @@ class _ActionCard extends StatelessWidget {
     return Container(
       width: width,
       height: width * 1.25,
-      margin: const EdgeInsets.symmetric(horizontal: defaultPadding),
       transformAlignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -86,8 +86,8 @@ class _ActionCard extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            top: defaultPadding * 2,
-            left: defaultPadding * 2,
+            top: defaultPadding * 1.75,
+            left: defaultPadding * 1.75,
             child: Text(
               label,
               style: Theme.of(context).textTheme.labelLarge,
