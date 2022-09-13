@@ -79,11 +79,14 @@ class JournalViewState extends State<JournalView> {
     });
   }
 
-  void animateTo(int pageIndex) {
+  void animateTo(int pageIndex, {int? durationMillis}) {
     _pageController.animateToPage(
       pageIndex,
-      duration: defaultTransitionDuration,
-      curve: Curves.decelerate,
+      duration: Duration(
+        milliseconds:
+            durationMillis ?? (_currentPage.toInt() - pageIndex).abs() * 300,
+      ),
+      curve: Curves.easeOut,
     );
   }
 
