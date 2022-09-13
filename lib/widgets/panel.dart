@@ -25,6 +25,29 @@ class Panel extends StatelessWidget {
   }
 }
 
+class TitledPanel extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const TitledPanel({Key? key, required this.title, required this.children})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: defaultPadding * 1.5),
+          child: Text(title, style: Theme.of(context).textTheme.titleSmall),
+        ),
+        const SmallColumnGap(),
+        Panel(children: children),
+      ],
+    );
+  }
+}
+
 class PanelTitleItem extends StatelessWidget {
   final String title;
   final Widget? leading;
