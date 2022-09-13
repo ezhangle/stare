@@ -12,22 +12,24 @@ class LEDIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return Container(
+    return AnimatedContainer(
+      duration: defaultTransitionDuration,
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: glow ? colorScheme.primary : colorScheme.tertiary,
-        boxShadow: glow
-            ? <BoxShadow>[
-                BoxShadow(
-                  color: colorScheme.primary,
-                  offset: const Offset(0, 2),
-                  blurRadius: size,
-                )
-              ]
-            : null,
+        color: glow
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.background,
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: glow
+                ? Theme.of(context).colorScheme.primary
+                : Colors.transparent,
+            offset: Offset(0, size / 4),
+            blurRadius: size,
+          )
+        ],
       ),
     );
   }
